@@ -1,0 +1,15 @@
+pip install matplotlib
+pip install pandas
+pip install seaborn
+pip install scikit-learn
+pip install tensorflow
+pip install tensorflow[and-cuda]
+pip install otter-grader
+pip install imageio
+pip install gdown
+pip install pydot
+pip install pydotplus
+pip install graphviz
+pip install tf_keras_vis
+pip install opencv-python
+pip install kagglehub
