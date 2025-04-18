@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from PIL import Image
 from tqdm import tqdm
 from pathlib import Path
 import shutil
@@ -10,13 +9,14 @@ import shutil
 def visualize_outliers(num_examples, traingen, batch_size, outlier_indices):
     fig, axs = plt.subplots(2, num_examples, figsize=(15, 6))
 
+    # Find indices that are no outliers
     inlier_indices = np.setdiff1d(
         np.arange(len(traingen) * batch_size), outlier_indices
     )
     inlier_indices = inlier_indices[:num_examples]
 
     counter = 0
-    for idx in outlier_indices[:num_examples]:  # Adjust indices if needed
+    for idx in outlier_indices[:num_examples]:
         # Get the batch index and image index in the batch
         batch_idx = idx // batch_size
         image_idx_in_batch = idx % batch_size
@@ -48,17 +48,17 @@ def visualize_outliers(num_examples, traingen, batch_size, outlier_indices):
 
 
 def output_clean_train(DATA_DIR, traingen, outlier_indices):
-    # Define source and destination
     src_dir = Path(DATA_DIR) / "train"
     dst_dir = Path(DATA_DIR) / "clean_train"
     os.makedirs(dst_dir, exist_ok=True)
 
-    # Get filenames from the generator (same order as outlier indices)
+    # Get filenames
     filenames = traingen.filenames
     outlier_set = set(outlier_indices)
 
     # Copy non-outlier images
     for idx, rel_path in tqdm(enumerate(filenames), total=len(filenames)):
+        # If outlier, skip
         if idx in outlier_set:
             continue
 
@@ -67,6 +67,7 @@ def output_clean_train(DATA_DIR, traingen, outlier_indices):
         dst_class_dir.mkdir(parents=True, exist_ok=True)
 
         dst_path = dst_class_dir / Path(rel_path).name
+        # move file
         shutil.copy2(src_path, dst_path)
 
     print(f"Copied {len(filenames) - len(outlier_set)} non-outlier images to {dst_dir}")
