@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import os
 from PIL import Image
 from tqdm import tqdm
+from pathlib import Path
+import shutil
 
 
 def visualize_outliers(num_examples, traingen, batch_size, outlier_indices):
-    num_examples = 5
     fig, axs = plt.subplots(2, num_examples, figsize=(15, 6))
 
     inlier_indices = np.setdiff1d(
@@ -47,43 +48,25 @@ def visualize_outliers(num_examples, traingen, batch_size, outlier_indices):
 
 
 def output_clean_train(DATA_DIR, traingen, outlier_indices):
-    # Create output directory
-    clean_dir = DATA_DIR + "/clean_train"
-    os.makedirs(clean_dir, exist_ok=True)
+    # Define source and destination
+    src_dir = Path(DATA_DIR) / "train"
+    dst_dir = Path(DATA_DIR) / "clean_train"
+    os.makedirs(dst_dir, exist_ok=True)
 
-    # Map class names
-    class_indices = traingen.class_indices
-    inv_class_indices = {v: k for k, v in class_indices.items()}
+    # Get filenames from the generator (same order as outlier indices)
+    filenames = traingen.filenames
+    outlier_set = set(outlier_indices)
 
-    # Flatten list of outlier indices
-    outlier_indices_set = set(outlier_indices)
+    # Copy non-outlier images
+    for idx, rel_path in tqdm(enumerate(filenames), total=len(filenames)):
+        if idx in outlier_set:
+            continue
 
-    # Save only non-outlier images
-    current_idx = 0
-    saved_count = 0
+        src_path = src_dir / rel_path
+        dst_class_dir = dst_dir / rel_path.split("/")[0]
+        dst_class_dir.mkdir(parents=True, exist_ok=True)
 
-    for i in tqdm(range(len(traingen))):
-        batch_imgs, _ = next(traingen)
-        batch_filenames = traingen.filenames[
-            i * traingen.batch_size : (i + 1) * traingen.batch_size
-        ]
+        dst_path = dst_class_dir / Path(rel_path).name
+        shutil.copy2(src_path, dst_path)
 
-        for j, (img, fname) in enumerate(zip(batch_imgs, batch_filenames)):
-            if current_idx not in outlier_indices_set:
-                # Convert image to uint8
-                img_uint8 = (img[:, :, 0] * 255).astype(np.uint8)
-                pil_img = Image.fromarray(img_uint8, mode="L")
-
-                # Create class subdirectory
-                class_name = fname.split("/")[0]
-                class_dir = os.path.join(clean_dir, class_name)
-                os.makedirs(class_dir, exist_ok=True)
-
-                # Save image
-                save_path = os.path.join(class_dir, os.path.basename(fname))
-                pil_img.save(save_path)
-                saved_count += 1
-
-            current_idx += 1
-
-    print(f"Saved {saved_count} non-outlier images to {clean_dir}")
+    print(f"Copied {len(filenames) - len(outlier_set)} non-outlier images to {dst_dir}")
