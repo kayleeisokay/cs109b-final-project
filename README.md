@@ -8,22 +8,20 @@ Group Members
 4. Kaylee Vo
 5. Jie Zhao
 
-MS3 Tasks
+MS4 Tasks
 1. Santiago Becerra Cordoba
-- baseline model
-- implementation plan
+- Final model pipeline (build pipeline)
 
 2. Sarah Kim
-- data analysis
+- Problem Statement Refinement
+- ⁠⁠Comprehensive EDA Review
+- ⁠Results Interpretation and Analysis
 
 3. Chloe Seo
-- meaningful insights 
-- clean and labeled visualizations
+- Final model pipeline (build pipeline)
 
 4. Kaylee Vo
-- research question
-- summary of findings
+- Final model pipeline (write description)
 
 5. Jie Zhao
-- Data description 
-- Summary of data
+- Baseline model selection
