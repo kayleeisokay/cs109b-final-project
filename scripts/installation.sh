@@ -3,7 +3,7 @@ pip install pandas
 pip install seaborn
 pip install scikit-learn
 pip install tensorflow
-pip install tensorflow[and-cuda]
+pip install tensorflow[and-cuda]==2.15.1
 pip install otter-grader
 pip install imageio
 pip install gdown
