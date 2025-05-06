@@ -71,3 +71,90 @@ def output_clean_train(DATA_DIR, traingen, outlier_indices):
         shutil.copy2(src_path, dst_path)
 
     print(f"Copied {len(filenames) - len(outlier_set)} non-outlier images to {dst_dir}")
+
+
+# plot accuracy
+def plot_accuracy(history, plot_title="Model"):
+    """
+    Helper function to plot accuracy of a model.
+    """
+
+    plt.figure(figsize=(12, 6))
+
+    best_val_acc = np.max(history.history["val_accuracy"])
+    best_epoch = np.argmax(history.history["val_accuracy"])
+
+    epochs = range(1, len(history.history["accuracy"]) + 1)
+
+    plt.plot(epochs, history.history["accuracy"], label="Training Accuracy")
+    plt.plot(epochs, history.history["val_accuracy"], label="Validation Accuracy")
+
+    plt.axvline(
+        best_epoch + 1,
+        color="red",
+        linestyle="--",
+        label=f"Best val acc: {best_val_acc:.4f}",
+    )
+
+    plt.title(f"{plot_title}")
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.xticks(epochs)
+    plt.legend(loc="lower right")
+
+
+def plot_accuracy_and_loss(history, plot_title="Model Training History"):
+    plt.figure(figsize=(14, 6))
+
+    # Extract metrics from history
+    acc = history.history["accuracy"]
+    val_acc = history.history["val_accuracy"]
+    loss = history.history["loss"]
+    val_loss = history.history["val_loss"]
+    epochs = range(1, len(acc) + 1)
+
+    # Accuracy plot
+    plt.subplot(1, 2, 1)
+    best_epoch_acc = np.argmax(val_acc) + 1
+    best_val_acc = val_acc[best_epoch_acc - 1]
+
+    plt.plot(epochs, acc, label="Training Accuracy", linewidth=2)
+    plt.plot(epochs, val_acc, label="Validation Accuracy", linewidth=2)
+    plt.axvline(
+        x=best_epoch_acc,
+        color="k",
+        linestyle="--",
+        label=f"Best Val Acc: {best_val_acc:.4f} at Epoch {best_epoch_acc}",
+    )
+
+    plt.title("Training and Validation Accuracy", fontsize=14)
+    plt.xlabel("Epoch", fontsize=12)
+    plt.ylabel("Accuracy", fontsize=12)
+    plt.xticks(rotation=45)
+    plt.grid(alpha=0.3)
+    plt.legend(fontsize=10)
+
+    # Loss plot
+    plt.subplot(1, 2, 2)
+    best_epoch_loss = np.argmin(val_loss) + 1
+    best_val_loss = val_loss[best_epoch_loss - 1]
+
+    plt.plot(epochs, loss, label="Training Loss", linewidth=2)
+    plt.plot(epochs, val_loss, label="Validation Loss", linewidth=2)
+    plt.axvline(
+        x=best_epoch_loss,
+        color="k",
+        linestyle="--",
+        label=f"Best Val Loss: {best_val_loss:.4f} at Epoch {best_epoch_loss}",
+    )
+
+    plt.title("Training and Validation Loss", fontsize=14)
+    plt.xlabel("Epoch", fontsize=12)
+    plt.ylabel("Loss", fontsize=12)
+    plt.xticks(rotation=45)
+    plt.grid(alpha=0.3)
+    plt.legend(fontsize=10)
+
+    plt.suptitle(plot_title, fontsize=16, y=1.02)
+    plt.tight_layout()
+    plt.show()
