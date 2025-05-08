@@ -13,3 +13,4 @@ pip install graphviz
 pip install tf_keras_vis
 pip install opencv-python
 pip install kagglehub
+pip install pytorch-lightning
